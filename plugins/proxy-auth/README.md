@@ -19,9 +19,11 @@ The following steps are require in SnappyMail:
    - Master User is dependent on Dovecot config (see below)
    - Master User Password is dependent on Dovecot config (see below)
    - Header Name is dependent on authentication solution. This is the header containing the name of currently logged in user. In case of Authelia, this is "Remote-User".
-   - Check Proxy: Since this plugin partially bypasses authentication, it is important to only allow this access from well-defined hosts. It is highly recommended to activate this option!
-   - When checking for reverse proxy, it is required to set the IP filter to either an IP address or a subnet.
    - Automatic Login: Automatically logs in the user of user header is present (see below)
+
+> **Security note**
+>
+> This plugin trusts the configured request header as proof of identity. Anyone who can reach the SnappyMail container directly and set that header can log in as any user. You **must** ensure that SnappyMail is only reachable through your reverse proxy / SSO chain (e.g. via the docker network, a firewall, or by binding SnappyMail to a non-public interface) and that the upstream proxy strips any client-supplied value of the header before forwarding. The plugin itself does no source-IP validation — earlier versions had a `check_proxy` option, but it inspected the forwarded client IP (the end user's IP) and therefore did not actually verify that the request came from the proxy. It has been removed; gate access at the network layer instead.
 
 This concludes the setup of SnappyMail.
 
