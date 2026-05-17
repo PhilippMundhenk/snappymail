@@ -79,3 +79,11 @@ The user is always considered logged in, as authentication is handled through re
 Auto login can be disabled in the plugin settings.
 You can also change the logout link in admin panel -> Config -> custom_logout_link to the one of your authentication system, e.g., ```https://auth.yourdomain.com/logout```.
 In this case, you can log out from your overall system via SnappyMail.
+
+## Troubleshooting
+
+### IMAP `AUTHENTICATIONFAILED` after a container rebuild / upgrade
+
+The master user/password fields are encrypted at rest using SnappyMail's `APP_SALT`. If that salt is regenerated (e.g., the data volume was reset, the container was rebuilt without persisting `_data_`, or the salt file was rotated), the values in `plugin-proxy-auth.json` can no longer be decrypted. `getDecrypted()` then silently returns `null`, an empty password is passed to IMAP, and Dovecot rejects the login with `AUTHENTICATIONFAILED`.
+
+Fix: open admin panel -> Extensions -> Proxy Auth, re-enter the Master User and Master Password (and any other previously-set encrypted fields), and save. The values will be re-encrypted under the current salt.
