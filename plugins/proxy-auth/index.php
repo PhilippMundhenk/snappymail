@@ -6,8 +6,8 @@ class ProxyAuthPlugin extends \RainLoop\Plugins\AbstractPlugin
 		NAME     = 'Proxy Auth',
 		AUTHOR   = 'Philipp',
 		URL      = 'https://www.mundhenk.org/',
-		VERSION  = '0.5',
-		RELEASE  = '2024-09-20',
+		VERSION  = '0.6',
+		RELEASE  = '2026-05-17',
 		REQUIRED = '2.36.1',
 		CATEGORY = 'Login',
 		LICENSE  = 'MIT',
@@ -84,7 +84,7 @@ class ProxyAuthPlugin extends \RainLoop\Plugins\AbstractPlugin
 		$sMsg = "ProxyIP: " . $sProxyIP;
 		$oLogger->Write($sMsg, $sLevel, $sPrefix);
 
-		$sProxyCheck = $this->Config()->getDecrypted('plugin', 'proxy_check', '');
+		$sProxyCheck = (bool) $this->Config()->Get('plugin', 'check_proxy', false);
 		$sClientIPs = $this->Manager()->Actions()->Http()->GetClientIP(true);
 
 		/* make sure that remote user is only set by authorized proxy to avoid security risks */
@@ -192,8 +192,7 @@ class ProxyAuthPlugin extends \RainLoop\Plugins\AbstractPlugin
 				->SetLabel('Check Proxy')
 				->SetType(\RainLoop\Enumerations\PluginPropertyType::BOOL)
 				->SetDescription('Activates check if proxy is connecting')
-				->SetDefaultValue(true)
-				->SetEncrypted(),
+				->SetDefaultValue(true),
 			\RainLoop\Plugins\Property::NewInstance('proxy_ip')
 				->SetLabel('Proxy IPNet')
 				->SetType(\RainLoop\Enumerations\PluginPropertyType::STRING_TEXT)
